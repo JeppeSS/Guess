@@ -1,0 +1,2 @@
+TODO - [Doc]: Write docu to the function definitions in hgl_rand.h.
+TODO - [Test]: Write some tests for hgl_rand.
