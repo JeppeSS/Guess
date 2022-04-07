@@ -1,3 +1,4 @@
 TODO - [Doc]: Write docu to the function definitions in hgl_rand.h.
 TODO - [Test]: Write some tests for hgl_rand.
 TODO - [Build]: Move compiler warning flags to a variable.
+TODO - [Core]: Add functionality to parse string to int.
