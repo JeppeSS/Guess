@@ -23,7 +23,14 @@ main( void ){
         return EXIT_FAILURE;
     }
 
-    fprintf( stdout, "\nUser input: %s\n", input );
+    hgl_str user_input = hgl_str_new( input );
+    hgl_str_int guess = hgl_str_parse_int( user_input );
+
+    if( guess.is_valid ) {
+        fprintf( stdout, "\nGuess: %d\n", guess.result );
+    } else {
+        fprintf( stderr, "\nInvalid\n" );
+    }
 
     return EXIT_SUCCESS;
 }
