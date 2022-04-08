@@ -2,7 +2,6 @@
 #define _HGL_RAND_H_
 
 
-
 void 
 hgl_rand_seed( unsigned int seed );
 

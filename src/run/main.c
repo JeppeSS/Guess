@@ -2,7 +2,8 @@
 #include <stdlib.h>
 #include <time.h>
 
-#include "core/hgl_rand.h"
+#include "core/random/hgl_rand.h"
+
 
 int
 main( void ){
