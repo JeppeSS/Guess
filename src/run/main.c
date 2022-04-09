@@ -4,6 +4,7 @@
 
 #include "core/random/hgl_rand.h"
 #include "core/string/hgl_str.h"
+#include "core/console/hgl_input.h"
 
 
 int
@@ -17,20 +18,19 @@ main( void ){
     const hgl_str enter_num_txt = hgl_str_new( "Enter a number: ");
     fprintf( stdout, "%s", enter_num_txt.p_chars );
 
-    char input[ 256 ] = { 0 };
-    if( !fgets( input, sizeof( input ), stdin) ) {
-        fprintf( stderr, "Something went wrong. Could not read user input." );
-        return EXIT_FAILURE;
+   
+
+    hgl_input user_input = hgl_input_fetch( 256 );
+    if( user_input.is_valid ) {
+        hgl_str_int guess = hgl_str_parse_int( user_input.result );
+
+        if( guess.is_valid ) {
+            fprintf( stdout, "\nGuess: %d\n", guess.result );
+        } else {
+           fprintf( stderr, "\nInvalid\n" );
+        }
     }
 
-    hgl_str user_input = hgl_str_new( input );
-    hgl_str_int guess = hgl_str_parse_int( user_input );
-
-    if( guess.is_valid ) {
-        fprintf( stdout, "\nGuess: %d\n", guess.result );
-    } else {
-        fprintf( stderr, "\nInvalid\n" );
-    }
 
     return EXIT_SUCCESS;
 }
