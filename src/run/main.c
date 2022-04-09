@@ -6,31 +6,64 @@
 #include "core/string/hgl_str.h"
 #include "core/console/hgl_input.h"
 
+typedef struct {
+    int number_to_guess;
+    unsigned int allowed_attempts;
+    unsigned int attempts_used;
+
+} guess_state;
+
+guess_state
+guess_state_new( unsigned int allowed_attempts );
 
 int
 main( void ){
+    // Initialize
     hgl_rand_seed( time( NULL ) );
-    const int num_to_guess = hgl_rand_int( -5, 5 );
+    guess_state game = guess_state_new( 3 );
 
-    fprintf( stdout, "Secret number to guess %d\n", num_to_guess );
+    const size_t MAX_INPUT_SIZE = 128;
+
+    // Text
+    const hgl_str enter_num_txt     = hgl_str_new( "Enter a number:" );
+    const hgl_str invalid_input_txt = hgl_str_new( "Invalid input, try again." ); 
+    const hgl_str win_txt           = hgl_str_new( "You win!");
 
 
-    const hgl_str enter_num_txt = hgl_str_new( "Enter a number: ");
-    fprintf( stdout, "%s", enter_num_txt.p_chars );
+    bool is_running = true;
+    while( is_running ) {
+        fprintf( stdout, "%s ", enter_num_txt.p_chars );
+        const hgl_input user_input = hgl_input_fetch( MAX_INPUT_SIZE );
 
-   
+        if( user_input.is_valid ) {
+            const hgl_str_int guess_input = hgl_str_parse_int( user_input.result );
+            if( guess_input.is_valid ) {
+                const int guess = guess_input.result;
+                if( guess == game.number_to_guess ) {
+                    fprintf( stdout, "%s\n", win_txt.p_chars );
+                    is_running = false;
+                }
+            } else {
+                fprintf( stdout, "%s\n\n", invalid_input_txt.p_chars ); 
+            }
 
-    hgl_input user_input = hgl_input_fetch( 256 );
-    if( user_input.is_valid ) {
-        hgl_str_int guess = hgl_str_parse_int( user_input.result );
-
-        if( guess.is_valid ) {
-            fprintf( stdout, "\nGuess: %d\n", guess.result );
         } else {
-           fprintf( stderr, "\nInvalid\n" );
+            fprintf( stdout, "%s\n\n", invalid_input_txt.p_chars );
         }
+
     }
+
 
 
     return EXIT_SUCCESS;
 }
+
+guess_state
+guess_state_new( unsigned int allowed_attempts ) {
+    return ( guess_state ) {
+        .allowed_attempts = allowed_attempts,
+        .attempts_used    = 0,
+        .number_to_guess = hgl_rand_int( 0, 10 )
+    };
+}
+

@@ -7,3 +7,5 @@ TODO - [Build]: Add run functionality.
 TODO - [Core]: Write docu to the function definitions in hgl_str.h.
 TODO - [Test]: Write some tests for hgl_str
 TODO - [Core]: Move hgl_str_int code to its own file. 
+TODO - [Core]: Write docu to the function definitions in hgl_input.h.
+TODO - [Test]: Write some tests for hgl_input
