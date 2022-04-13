@@ -6,10 +6,22 @@
 #include "core/string/hgl_str.h"
 #include "core/console/hgl_input.h"
 
+
+typedef enum {
+    ENTER_NUM_TXT     = 0,
+    INVALID_INPUT_TXT = 1,
+    WIN_TXT           = 2,
+    HIGH_TXT          = 3,
+    LOW_TXT           = 4,
+    TXT_COUNT         = 5,
+
+} txt_str;
+
 typedef struct {
     int number_to_guess;
     unsigned int allowed_attempts;
     unsigned int attempts_used;
+    hgl_str texts[ TXT_COUNT ];
 
 } game_state;
 
@@ -35,17 +47,9 @@ main( void ){
 
     const size_t MAX_INPUT_SIZE = 128;
 
-    // Text
-    const hgl_str enter_num_txt     = hgl_str_new( "Enter a number:" );
-    const hgl_str invalid_input_txt = hgl_str_new( "Invalid input, try again." ); 
-    const hgl_str win_txt           = hgl_str_new( "You win!");
-    const hgl_str too_high_txt      = hgl_str_new( "Guess is too high!" );
-    const hgl_str too_low_txt       = hgl_str_new( "Guess is too low!" );
-
-
     bool is_running = true;
     while( is_running ) {
-        fprintf( stdout, "%s ", enter_num_txt.p_chars );
+        fprintf( stdout, "%s ", game.texts[ ENTER_NUM_TXT ].p_chars );
         const hgl_input user_input = hgl_input_fetch( MAX_INPUT_SIZE );
 
         if( user_input.is_valid ) {
@@ -53,22 +57,22 @@ main( void ){
             if( guess_input.is_valid ) {
                 const guess_status status = process_guess( game.number_to_guess, guess_input.result );
                 if( status == EQUAL ) {
-                    fprintf( stdout, "%s\n\n", win_txt.p_chars );
+                    fprintf( stdout, "%s\n\n", game.texts[ WIN_TXT ].p_chars );
                     is_running = false;
                 } else if ( status == HIGH ) {
-                    fprintf( stdout, "%s\n\n", too_high_txt.p_chars );
+                    fprintf( stdout, "%s\n\n", game.texts[ HIGH_TXT ].p_chars );
                     game.attempts_used++;
                 } else {
-                    fprintf( stdout, "%s\n\n", too_low_txt.p_chars );
+                    fprintf( stdout, "%s\n\n", game.texts[ LOW_TXT ].p_chars );
                     game.attempts_used++;
                 }
 
             } else {
-                fprintf( stdout, "%s\n\n", invalid_input_txt.p_chars ); 
+                fprintf( stdout, "%s\n\n", game.texts[ INVALID_INPUT_TXT ].p_chars ); 
             }
 
         } else {
-            fprintf( stdout, "%s\n\n", invalid_input_txt.p_chars );
+            fprintf( stdout, "%s\n\n", game.texts[ INVALID_INPUT_TXT ].p_chars );
         }
 
     }
@@ -83,7 +87,15 @@ game_state_new( unsigned int allowed_attempts ) {
     return ( game_state ) {
         .allowed_attempts = allowed_attempts,
         .attempts_used    = 0,
-        .number_to_guess = hgl_rand_int( 0, 10 )
+        .number_to_guess = hgl_rand_int( 0, 10 ),
+        .texts           = {
+            [ ENTER_NUM_TXT ]     = hgl_str_new( "Enter a number:" ),
+            [ INVALID_INPUT_TXT ] = hgl_str_new( "Invalid input, try again." ),
+            [ WIN_TXT ]           = hgl_str_new( "You win!" ),
+            [ HIGH_TXT ]          = hgl_str_new( "Guess is too high!" ),
+            [ LOW_TXT ]           = hgl_str_new( "Guess is too low!" )
+
+        }
     };
 }
 
