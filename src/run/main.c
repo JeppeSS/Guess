@@ -7,13 +7,8 @@
 
 int
 main( void ){
-    guessing game = guessing_new( 3 );
-
-    bool is_running = true;
-    while( is_running ) {
-        guessing_update( &game );
-    }
-
+    guessing game = guessing_new();
+    guessing_run( &game );
 
     return EXIT_SUCCESS;
 }
