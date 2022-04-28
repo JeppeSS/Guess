@@ -6,6 +6,9 @@
 #include "core/random/hgl_rand.h"
 #include "core/console/hgl_input.h"
 
+static game_state
+fetch_menu_option( guessing *p_guessing );
+
 static int
 fetch_guess( guessing *p_guessing );
 
@@ -19,14 +22,16 @@ guessing_new( void ) {
     return ( guessing ) {
         .is_running      = false,
         .max_input_size  = 64,
+        .game_state      = MENU,
         .texts           = {
             [ ENTER_NUM_TXT ]     = hgl_str_new( "Enter a number:" ),
             [ INVALID_INPUT_TXT ] = hgl_str_new( "Invalid input, try again." ),
             [ WIN_TXT ]           = hgl_str_new( "You win!" ),
             [ LOSE_TXT ]          = hgl_str_new( "You lost!" ),
             [ HIGH_TXT ]          = hgl_str_new( "Guess is too high!" ),
-            [ LOW_TXT ]           = hgl_str_new( "Guess is too low!" )
-
+            [ LOW_TXT ]           = hgl_str_new( "Guess is too low!" ),
+            [ MENU_TXT ]          = hgl_str_new( "Guessing Game\n\n1) Play\n2) Quit\n\n"),
+            [ INPUT_MARKER_TXT ]  = hgl_str_new( "> " )
         }
     };
 }
@@ -36,20 +41,61 @@ guessing_run( guessing *p_guessing ) {
     if( !p_guessing->is_running ) {
         p_guessing->state      = guess_state_new( -10, 10, 3 );
         p_guessing->is_running = true;
-            
+
         while( p_guessing->is_running ) {
-            int guess = fetch_guess( p_guessing );
-            process_guess( p_guessing, guess );
+
+            if( p_guessing->game_state == MENU ) {
+                const game_state state = fetch_menu_option( p_guessing );
+                p_guessing->game_state = state;
+
+            } else if ( p_guessing->game_state == PLAY ) {
+                const int guess = fetch_guess( p_guessing );
+                process_guess( p_guessing, guess );
+
+            } else {
+                p_guessing->is_running = false;
+            }
+
+
         }
     }
 }
 
+static game_state
+fetch_menu_option( guessing *p_guessing ) {
+    const hgl_str *p_texts = p_guessing->texts;
+
+    game_state state = MENU;
+    while ( state == MENU ) {
+        fprintf( stdout, "%s", p_texts[ MENU_TXT ].p_chars );
+        fprintf( stdout, "%s", p_texts[ INPUT_MARKER_TXT ].p_chars );
+
+        const hgl_input user_input = hgl_input_fetch( p_guessing->max_input_size );
+
+        if( user_input.is_valid ){
+            const hgl_str_int option_parse = hgl_str_parse_int( user_input.result );
+            if( option_parse.is_valid ) {
+                int option = option_parse.result;
+                if( option == 1 ) {
+                    state = PLAY;
+                } else if( option == 2 ){
+                    state = QUIT;
+                }
+            }
+        }
+
+        if( state == MENU ){
+            fprintf( stdout, "%s\n\n", p_texts[ INVALID_INPUT_TXT ].p_chars ); 
+        }
+    }
+    
+    return state;
+}
 
 static int
 fetch_guess( guessing *p_guessing ) {
     const hgl_str *p_texts = p_guessing->texts;
     hgl_str_int guess = hgl_str_int_invalid();
-
 
     while( !guess.is_valid ){
         fprintf( stdout, "%s ", p_texts[ ENTER_NUM_TXT ].p_chars );
@@ -68,15 +114,15 @@ fetch_guess( guessing *p_guessing ) {
 
 static void
 process_guess( guessing *p_guessing, int guess ) {
-    const hgl_str *p_texts = p_guessing->texts;
+    const hgl_str *p_texts    = p_guessing->texts;
     const guess_status status = guess_state_make_guess( &p_guessing->state, guess );
 
     if( status == WIN_STATUS ) {
         fprintf( stdout, "%s\n\n", p_texts[ WIN_TXT ].p_chars );
-        p_guessing->is_running = false;
+        p_guessing->game_state = MENU;
     } else if( status == LOSE_STATUS ) {
         fprintf( stdout, "%s\n\n", p_texts[ LOSE_TXT ].p_chars );
-        p_guessing->is_running = false;
+        p_guessing->game_state = MENU;
     } else if( status == GUESS_HIGH_STATUS ) {
         fprintf( stdout, "%s\n\n", p_texts[ HIGH_TXT ].p_chars );
     } else {

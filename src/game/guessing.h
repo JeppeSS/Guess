@@ -14,15 +14,27 @@ typedef enum {
     LOSE_TXT          = 3,
     HIGH_TXT          = 4,
     LOW_TXT           = 5,
-    TXT_COUNT         = 6,
+    MENU_TXT          = 6,
+    INPUT_MARKER_TXT  = 7,
+    TXT_COUNT         = 8,
+
 
 } txt_str;
+
+
+typedef enum {
+    MENU,
+    PLAY,
+    QUIT
+
+} game_state;
 
 typedef struct {  
     // Game loop
     bool is_running;
 
     // Game specific data
+    game_state  game_state;
     guess_state state;
 
     // Configurations

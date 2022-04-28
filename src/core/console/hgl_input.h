@@ -11,6 +11,8 @@ typedef struct {
 
 } hgl_input;
 
+#define hgl_input_invalid() ( hgl_input ){ hgl_str_null(), false }
+
 hgl_input
 hgl_input_fetch( size_t max_size );
 
