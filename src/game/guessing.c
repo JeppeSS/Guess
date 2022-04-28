@@ -28,7 +28,7 @@ guessing_new( void ) {
 void
 guessing_run( guessing *p_guessing ) {
     if( !p_guessing->is_running ) {
-        p_guessing->state      = guess_state_new( 3 );
+        p_guessing->state      = guess_state_new( -10, 10, 3 );
         p_guessing->is_running = true;
             
         const hgl_str *p_texts = p_guessing->texts;
