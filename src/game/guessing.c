@@ -37,10 +37,7 @@ guessing_run( guessing *p_guessing ) {
         p_guessing->state      = guess_state_new( -10, 10, 3 );
         p_guessing->is_running = true;
             
-        const hgl_str *p_texts = p_guessing->texts;
-
         while( p_guessing->is_running ) {
-            fprintf( stdout, "%s ", p_texts[ ENTER_NUM_TXT ].p_chars );
             int guess = fetch_guess( p_guessing );
             process_guess( p_guessing, guess );
         }
@@ -53,7 +50,9 @@ fetch_guess( guessing *p_guessing ) {
     const hgl_str *p_texts = p_guessing->texts;
     hgl_str_int guess = hgl_str_int_invalid();
 
+
     while( !guess.is_valid ){
+        fprintf( stdout, "%s ", p_texts[ ENTER_NUM_TXT ].p_chars );
         const hgl_input user_input = hgl_input_fetch( p_guessing->max_input_size );
         if( user_input.is_valid ){
             guess = hgl_str_parse_int( user_input.result );
