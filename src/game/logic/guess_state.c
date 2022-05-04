@@ -6,6 +6,8 @@
 guess_state
 guess_state_new( int16_t lower_bound, int16_t upper_bound, uint8_t allowed_attempts ) {
     return ( guess_state ) {
+        .lower_bound      = lower_bound,
+        .upper_bound      = upper_bound,
         .number_to_guess  = hgl_rand_int( lower_bound, upper_bound ),
         .allowed_attempts = allowed_attempts,
         .attempts_used    = 0

@@ -26,6 +26,7 @@ guessing_new( void ) {
         .texts           = {
             [ ENTER_NUM_TXT ]     = hgl_str_new( "Enter a number:" ),
             [ INVALID_INPUT_TXT ] = hgl_str_new( "Invalid input, try again." ),
+            [ RANGE_TXT ]         = hgl_str_new( "Guess number between or equal: "),
             [ WIN_TXT ]           = hgl_str_new( "You win!" ),
             [ LOSE_TXT ]          = hgl_str_new( "You lost!" ),
             [ HIGH_TXT ]          = hgl_str_new( "Guess is too high!" ),
@@ -42,6 +43,7 @@ guessing_run( guessing *p_guessing ) {
         p_guessing->state      = guess_state_new( -10, 10, 3 );
         p_guessing->is_running = true;
 
+        const hgl_str *p_texts = p_guessing->texts;
         while( p_guessing->is_running ) {
 
             if( p_guessing->game_state == MENU ) {
@@ -49,6 +51,7 @@ guessing_run( guessing *p_guessing ) {
                 p_guessing->game_state = state;
 
             } else if ( p_guessing->game_state == PLAY ) {
+                fprintf( stdout, "%s %d - %d\n", p_texts[ RANGE_TXT ].p_chars, p_guessing->state.lower_bound, p_guessing->state.upper_bound );
                 const int guess = fetch_guess( p_guessing );
                 process_guess( p_guessing, guess );
 
