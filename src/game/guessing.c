@@ -6,8 +6,15 @@
 #include "core/random/hgl_rand.h"
 #include "core/console/hgl_input.h"
 
+
+static void
+handle_menu_scene( guessing *p_guessing );
+
 static game_state
 fetch_menu_option( guessing *p_guessing );
+
+static void
+handle_play_scene( guessing *p_guessing );
 
 static int
 fetch_guess( guessing *p_guessing );
@@ -43,26 +50,36 @@ guessing_run( guessing *p_guessing ) {
         p_guessing->state      = guess_state_new( -10, 10, 3 );
         p_guessing->is_running = true;
 
-        const hgl_str *p_texts = p_guessing->texts;
         while( p_guessing->is_running ) {
 
             if( p_guessing->game_state == MENU ) {
-                const game_state state = fetch_menu_option( p_guessing );
-                p_guessing->game_state = state;
+                handle_menu_scene( p_guessing );
 
             } else if ( p_guessing->game_state == PLAY ) {
-                fprintf( stdout, "%s %d - %d\n", p_texts[ RANGE_TXT ].p_chars, p_guessing->state.lower_bound, p_guessing->state.upper_bound );
-                const int guess = fetch_guess( p_guessing );
-                process_guess( p_guessing, guess );
+                handle_play_scene( p_guessing );
 
             } else {
                 p_guessing->is_running = false;
             }
 
-
-        }
+        } 
     }
 }
+
+static void
+handle_menu_scene( guessing *p_guessing ) {
+    const game_state state = fetch_menu_option( p_guessing );
+    p_guessing->game_state = state;
+}
+
+static void
+handle_play_scene( guessing *p_guessing ) {
+    const hgl_str *p_texts = p_guessing->texts;
+    fprintf( stdout, "%s %d - %d\n", p_texts[ RANGE_TXT ].p_chars, p_guessing->state.lower_bound, p_guessing->state.upper_bound );
+    const int guess = fetch_guess( p_guessing );
+    process_guess( p_guessing, guess );
+}
+
 
 static game_state
 fetch_menu_option( guessing *p_guessing ) {
