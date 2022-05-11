@@ -39,6 +39,7 @@ guessing_new( void ) {
             [ HIGH_TXT ]          = hgl_str_new( "Guess is too high!" ),
             [ LOW_TXT ]           = hgl_str_new( "Guess is too low!" ),
             [ MENU_TXT ]          = hgl_str_new( "Guessing Game\n\n1) Play\n2) Quit\n\n"),
+            [ ATTEMPTS_TXT ]      = hgl_str_new( "Attmpts used:"),
             [ INPUT_MARKER_TXT ]  = hgl_str_new( "> " )
         }
     };
@@ -75,8 +76,8 @@ handle_menu_scene( guessing *p_guessing ) {
 static void
 handle_play_scene( guessing *p_guessing ) {
     const hgl_str *p_texts = p_guessing->texts;
-    fprintf( stdout, "%s %d - %d\n", p_texts[ RANGE_TXT ].p_chars, p_guessing->state.lower_bound, p_guessing->state.upper_bound );
-    fprintf( stdout, "Attempts used: %d / %d\n", p_guessing->state.attempts_used, p_guessing->state.allowed_attempts );
+    fprintf( stdout, "\n%s %d - %d\n", p_texts[ RANGE_TXT ].p_chars, p_guessing->state.lower_bound, p_guessing->state.upper_bound );
+    fprintf( stdout, "%s %d / %d\n", p_texts[ ATTEMPTS_TXT ].p_chars, p_guessing->state.attempts_used, p_guessing->state.allowed_attempts );
     const int guess = fetch_guess( p_guessing );
     process_guess( p_guessing, guess );
 }
@@ -119,7 +120,8 @@ fetch_guess( guessing *p_guessing ) {
     hgl_str_int guess = hgl_str_int_invalid();
 
     while( !guess.is_valid ){
-        fprintf( stdout, "%s ", p_texts[ ENTER_NUM_TXT ].p_chars );
+        fprintf( stdout, "%s\n\n", p_texts[ ENTER_NUM_TXT ].p_chars );
+        fprintf( stdout, "%s", p_texts[ INPUT_MARKER_TXT ].p_chars );
         const hgl_input user_input = hgl_input_fetch( p_guessing->max_input_size );
         if( user_input.is_valid ){
             guess = hgl_str_parse_int( user_input.result );

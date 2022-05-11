@@ -17,7 +17,8 @@ typedef enum {
     MENU_TXT          = 6,
     INPUT_MARKER_TXT  = 7,
     RANGE_TXT         = 8,
-    TXT_COUNT         = 9
+    ATTEMPTS_TXT      = 9,
+    TXT_COUNT         = 10
 
 } txt_str;
 
