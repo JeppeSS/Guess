@@ -19,6 +19,9 @@ handle_play_scene( guessing *p_guessing );
 static int
 fetch_guess( guessing *p_guessing );
 
+static guess_difficulty
+fetch_difficulty( guessing *p_guessing );
+
 static void
 process_guess( guessing *p_guessing, int guess );
 
@@ -32,16 +35,17 @@ guessing_new( void ) {
         .game_state      = MENU,
         .state           = guess_state_invalid(),
         .texts           = {
-            [ ENTER_NUM_TXT ]     = hgl_str_new( "Enter a number:" ),
-            [ INVALID_INPUT_TXT ] = hgl_str_new( "Invalid input, try again." ),
-            [ RANGE_TXT ]         = hgl_str_new( "Guess number between or equal: "),
-            [ WIN_TXT ]           = hgl_str_new( "You win!" ),
-            [ LOSE_TXT ]          = hgl_str_new( "You lost!" ),
-            [ HIGH_TXT ]          = hgl_str_new( "Guess is too high!" ),
-            [ LOW_TXT ]           = hgl_str_new( "Guess is too low!" ),
-            [ MENU_TXT ]          = hgl_str_new( "Guessing Game\n\n1) Play\n2) Quit\n\n"),
-            [ ATTEMPTS_TXT ]      = hgl_str_new( "Attmpts used:"),
-            [ INPUT_MARKER_TXT ]  = hgl_str_new( "> " )
+            [ ENTER_NUM_TXT ]       = hgl_str_new( "Enter a number:" ),
+            [ INVALID_INPUT_TXT ]   = hgl_str_new( "Invalid input, try again." ),
+            [ RANGE_TXT ]           = hgl_str_new( "Guess number between or equal: "),
+            [ WIN_TXT ]             = hgl_str_new( "You win!" ),
+            [ LOSE_TXT ]            = hgl_str_new( "You lost!" ),
+            [ HIGH_TXT ]            = hgl_str_new( "Guess is too high!" ),
+            [ LOW_TXT ]             = hgl_str_new( "Guess is too low!" ),
+            [ MENU_TXT ]            = hgl_str_new( "Guessing Game\n\n1) Play\n2) Quit\n\n"),
+            [ ATTEMPTS_TXT ]        = hgl_str_new( "Attmpts used:"),
+            [ DIFFICULTY_MENU_TXT ] = hgl_str_new( "Difficulty\n\n1) Easy\n2) Medium\n3) Hard\n4) Hardcore\n\n"),
+            [ INPUT_MARKER_TXT ]    = hgl_str_new( "> " )
         }
     };
 }
@@ -78,7 +82,8 @@ handle_play_scene( guessing *p_guessing ) {
     const hgl_str *p_texts = p_guessing->texts;
 
     if( p_guessing->state.is_over ){
-      p_guessing->state      = guess_state_select_difficulty( EASY );
+      const guess_difficulty difficulty = fetch_difficulty( p_guessing );
+      p_guessing->state                 = guess_state_select_difficulty( difficulty );
     
     } else {
         fprintf( stdout, "\n%s %d - %d\n", p_texts[ RANGE_TXT ].p_chars, p_guessing->state.lower_bound, p_guessing->state.upper_bound );
@@ -118,6 +123,38 @@ fetch_menu_option( guessing *p_guessing ) {
     }
     
     return state;
+}
+
+static guess_difficulty
+fetch_difficulty( guessing *p_guessing ) {
+    const hgl_str *p_texts = p_guessing->texts;
+
+    const bool has_selected = false;
+    while( !has_selected) {
+        fprintf( stdout, "%s", p_texts[ DIFFICULTY_MENU_TXT ].p_chars );
+        fprintf( stdout, "%s", p_texts[ INPUT_MARKER_TXT ].p_chars );
+
+        const hgl_input user_input = hgl_input_fetch( p_guessing->max_input_size );
+
+        if( user_input.is_valid ){
+            const hgl_str_int option_parse = hgl_str_parse_int( user_input.result );
+            if( option_parse.is_valid ) {
+                const int option = option_parse.result;
+                if( option == 1 ) {
+                    return EASY;
+                } else if( option == 2 ){
+                    return MEDIUM;
+                } else if( option == 3 ){
+                    return HARD;
+                } else if( option == 4 ){
+                    return HARDCORE;
+                }
+            }
+        }
+
+        fprintf( stdout, "%s\n\n", p_texts[ INVALID_INPUT_TXT ].p_chars ); 
+    }
+
 }
 
 static int
