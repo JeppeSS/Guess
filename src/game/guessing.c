@@ -30,6 +30,7 @@ guessing_new( void ) {
         .is_running      = false,
         .max_input_size  = 64,
         .game_state      = MENU,
+        .state           = guess_state_invalid(),
         .texts           = {
             [ ENTER_NUM_TXT ]     = hgl_str_new( "Enter a number:" ),
             [ INVALID_INPUT_TXT ] = hgl_str_new( "Invalid input, try again." ),
@@ -48,7 +49,6 @@ guessing_new( void ) {
 void
 guessing_run( guessing *p_guessing ) {
     if( !p_guessing->is_running ) {
-        p_guessing->state      = guess_state_select_difficulty( EASY );
         p_guessing->is_running = true;
 
         while( p_guessing->is_running ) {
@@ -76,10 +76,16 @@ handle_menu_scene( guessing *p_guessing ) {
 static void
 handle_play_scene( guessing *p_guessing ) {
     const hgl_str *p_texts = p_guessing->texts;
-    fprintf( stdout, "\n%s %d - %d\n", p_texts[ RANGE_TXT ].p_chars, p_guessing->state.lower_bound, p_guessing->state.upper_bound );
-    fprintf( stdout, "%s %d / %d\n", p_texts[ ATTEMPTS_TXT ].p_chars, p_guessing->state.attempts_used, p_guessing->state.allowed_attempts );
-    const int guess = fetch_guess( p_guessing );
-    process_guess( p_guessing, guess );
+
+    if( p_guessing->state.is_over ){
+      p_guessing->state      = guess_state_select_difficulty( EASY );
+    
+    } else {
+        fprintf( stdout, "\n%s %d - %d\n", p_texts[ RANGE_TXT ].p_chars, p_guessing->state.lower_bound, p_guessing->state.upper_bound );
+        fprintf( stdout, "%s %d / %d\n\n", p_texts[ ATTEMPTS_TXT ].p_chars, p_guessing->state.attempts_used, p_guessing->state.allowed_attempts );
+        const int guess = fetch_guess( p_guessing );
+        process_guess( p_guessing, guess );
+    }
 }
 
 
