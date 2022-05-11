@@ -4,6 +4,14 @@
 #include <stdint.h>
 
 typedef enum {
+    EASY,
+    MEDIUM,
+    HARD,
+    HARDCORE
+    
+} guess_difficulty;
+
+typedef enum {
     WIN_STATUS,
     LOSE_STATUS,
     GUESS_LOW_STATUS,
@@ -20,9 +28,8 @@ typedef struct {
 
 } guess_state;
 
-
 guess_state
-guess_state_new( int16_t lower_bound, int16_t upper_bound, uint8_t allowed_attempts );
+guess_state_select_difficulty( guess_difficulty difficulty );
 
 guess_status
 guess_state_make_guess( guess_state *p_state, int16_t guess );

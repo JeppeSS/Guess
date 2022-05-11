@@ -47,7 +47,7 @@ guessing_new( void ) {
 void
 guessing_run( guessing *p_guessing ) {
     if( !p_guessing->is_running ) {
-        p_guessing->state      = guess_state_new( -10, 10, 3 );
+        p_guessing->state      = guess_state_select_difficulty( EASY );
         p_guessing->is_running = true;
 
         while( p_guessing->is_running ) {
@@ -76,6 +76,7 @@ static void
 handle_play_scene( guessing *p_guessing ) {
     const hgl_str *p_texts = p_guessing->texts;
     fprintf( stdout, "%s %d - %d\n", p_texts[ RANGE_TXT ].p_chars, p_guessing->state.lower_bound, p_guessing->state.upper_bound );
+    fprintf( stdout, "Attempts used: %d / %d\n", p_guessing->state.attempts_used, p_guessing->state.allowed_attempts );
     const int guess = fetch_guess( p_guessing );
     process_guess( p_guessing, guess );
 }
