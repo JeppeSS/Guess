@@ -9,7 +9,7 @@ output_name="Guess"
 root_dir="-Isrc/"
 files=$( find src | grep "\.c$")
 
-while getopts 'rd' opt; do
+while getopts 'rdc' opt; do
     case "$opt" in
         r)
             mkdir -p $output_dir/release
@@ -18,6 +18,9 @@ while getopts 'rd' opt; do
         d)
             mkdir -p $output_dir/debug
             $cc -std=$version -g $warnings $root_dir $files -o $output_dir/debug/$output_name
+            ;;
+        c)
+            rm -r $output_dir
             ;;
         \?)
             mkdir -p $output_dir/debug
