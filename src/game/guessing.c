@@ -16,18 +16,18 @@ fetch_menu_option( guessing *p_guessing );
 static void
 handle_play_scene( guessing *p_guessing );
 
-static int
+static int16_t
 fetch_guess( guessing *p_guessing );
 
 static guess_difficulty
 fetch_difficulty( guessing *p_guessing );
 
 static void
-process_guess( guessing *p_guessing, int guess );
+process_guess( guessing *p_guessing, int16_t guess );
 
 guessing
 guessing_new( void ) {
-    hgl_rand_seed( time( NULL ) );
+    hgl_rand_seed( ( unsigned int )time( NULL ) );
 
     return ( guessing ) {
         .is_running      = false,
@@ -88,7 +88,7 @@ handle_play_scene( guessing *p_guessing ) {
     } else {
         fprintf( stdout, "\n%s %d - %d\n", p_texts[ RANGE_TXT ].p_chars, p_guessing->state.lower_bound, p_guessing->state.upper_bound );
         fprintf( stdout, "%s %d / %d\n\n", p_texts[ ATTEMPTS_TXT ].p_chars, p_guessing->state.attempts_used, p_guessing->state.allowed_attempts );
-        const int guess = fetch_guess( p_guessing );
+        const int16_t guess = fetch_guess( p_guessing );
         process_guess( p_guessing, guess );
     }
 }
@@ -157,7 +157,7 @@ fetch_difficulty( guessing *p_guessing ) {
 
 }
 
-static int
+static int16_t
 fetch_guess( guessing *p_guessing ) {
     const hgl_str *p_texts = p_guessing->texts;
     hgl_str_int guess = hgl_str_int_invalid();
@@ -170,16 +170,16 @@ fetch_guess( guessing *p_guessing ) {
             guess = hgl_str_parse_int( user_input.result );
         }
 
-        if( !guess.is_valid ) {
+        if( !guess.is_valid || guess.result > INT16_MAX ) {
             fprintf( stdout, "%s\n\n", p_texts[ INVALID_INPUT_TXT ].p_chars ); 
         }
     }
 
-    return guess.result;
+    return ( int16_t )guess.result;
 }
 
 static void
-process_guess( guessing *p_guessing, int guess ) {
+process_guess( guessing *p_guessing, int16_t guess ) {
     const hgl_str *p_texts    = p_guessing->texts;
     const guess_status status = guess_state_make_guess( &p_guessing->state, guess );
 

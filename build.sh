@@ -1,6 +1,6 @@
 cc="clang"
 version="c17"
-warnings="-Wall -Wextra -Wshadow -Wdouble-promotion -Wformat=2 -Wundef"
+warnings="-Wall -Wextra -Wshadow -Wdouble-promotion -Wformat=2 -Wundef -Wconversion -Werror"
 
 output_dir="build"
 output_name="Guess"

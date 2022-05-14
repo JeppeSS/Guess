@@ -1,6 +1,7 @@
 #include "hgl_str.h"
 
 #include <stdio.h>
+#include <stdint.h>
 
 static size_t
 get_length( char *p_chars );
@@ -54,8 +55,8 @@ hgl_str_parse_int( hgl_str str ) {
     }
 
     
-    int start_idx = 0;
-    int sign = 1;
+    size_t start_idx = 0;
+    int8_t sign = 1;
     if( str.p_chars[ 0 ] == '-' ) {
         sign = -1;
         start_idx = 1;

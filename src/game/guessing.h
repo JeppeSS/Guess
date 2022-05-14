@@ -40,7 +40,7 @@ typedef struct {
     guess_state state;
 
     // Configurations
-    size_t max_input_size;
+    int max_input_size;
     
     // Storage
     hgl_str texts[ TXT_COUNT ];
