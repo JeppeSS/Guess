@@ -162,7 +162,7 @@ fetch_guess( guessing *p_guessing ) {
     const hgl_str *p_texts = p_guessing->texts;
     hgl_str_int guess = hgl_str_int_invalid();
 
-    while( !guess.is_valid ){
+    while( true ){
         fprintf( stdout, "%s\n\n", p_texts[ ENTER_NUM_TXT ].p_chars );
         fprintf( stdout, "%s", p_texts[ INPUT_MARKER_TXT ].p_chars );
         const hgl_input user_input = hgl_input_fetch( p_guessing->max_input_size );
@@ -170,9 +170,11 @@ fetch_guess( guessing *p_guessing ) {
             guess = hgl_str_parse_int( user_input.result );
         }
 
-        if( !guess.is_valid || guess.result > INT16_MAX ) {
-            fprintf( stdout, "%s\n\n", p_texts[ INVALID_INPUT_TXT ].p_chars ); 
+        if( guess.is_valid && guess.result >= INT16_MIN && guess.result <= INT16_MAX ) {
+            return ( int16_t )guess.result;
         }
+
+        fprintf( stdout, "%s\n\n", p_texts[ INVALID_INPUT_TXT ].p_chars ); 
     }
 
     return ( int16_t )guess.result;
