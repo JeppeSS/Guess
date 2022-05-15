@@ -11,16 +11,16 @@ static void
 handle_menu_scene( guessing *p_guessing );
 
 static game_state
-fetch_menu_option( guessing *p_guessing );
+fetch_menu_option( hgl_str *p_texts, int max_input_size );
 
 static void
 handle_play_scene( guessing *p_guessing );
 
 static int16_t
-fetch_guess( guessing *p_guessing );
+fetch_guess( hgl_str *p_texts, int max_input_size );
 
 static guess_difficulty
-fetch_difficulty( guessing *p_guessing );
+fetch_difficulty( hgl_str *p_texts, int max_input_size );
 
 static void
 process_guess( guessing *p_guessing, int16_t guess );
@@ -73,37 +73,33 @@ guessing_run( guessing *p_guessing ) {
 
 static void
 handle_menu_scene( guessing *p_guessing ) {
-    const game_state state = fetch_menu_option( p_guessing );
-    p_guessing->game_state = state;
+    p_guessing->game_state = fetch_menu_option( p_guessing->texts, p_guessing->max_input_size );
 }
 
 static void
 handle_play_scene( guessing *p_guessing ) {
     const hgl_str *p_texts = p_guessing->texts;
-
     if( p_guessing->state.is_over ){
-      const guess_difficulty difficulty = fetch_difficulty( p_guessing );
+      const guess_difficulty difficulty = fetch_difficulty( p_guessing->texts, p_guessing->max_input_size );
       p_guessing->state                 = guess_state_select_difficulty( difficulty );
     
     } else {
         fprintf( stdout, "\n%s %d - %d\n", p_texts[ RANGE_TXT ].p_chars, p_guessing->state.lower_bound, p_guessing->state.upper_bound );
         fprintf( stdout, "%s %d / %d\n\n", p_texts[ ATTEMPTS_TXT ].p_chars, p_guessing->state.attempts_used, p_guessing->state.allowed_attempts );
-        const int16_t guess = fetch_guess( p_guessing );
+        const int16_t guess = fetch_guess( p_guessing->texts, p_guessing->max_input_size );
         process_guess( p_guessing, guess );
     }
 }
 
 
 static game_state
-fetch_menu_option( guessing *p_guessing ) {
-    const hgl_str *p_texts = p_guessing->texts;
-
+fetch_menu_option( hgl_str *p_texts, int max_input_size ) {
     game_state state = MENU;
     while ( state == MENU ) {
         fprintf( stdout, "%s", p_texts[ MENU_TXT ].p_chars );
         fprintf( stdout, "%s", p_texts[ INPUT_MARKER_TXT ].p_chars );
 
-        const hgl_input user_input = hgl_input_fetch( p_guessing->max_input_size );
+        const hgl_input user_input = hgl_input_fetch( max_input_size );
 
         if( user_input.is_valid ){
             const hgl_str_int option_parse = hgl_str_parse_int( user_input.result );
@@ -126,15 +122,13 @@ fetch_menu_option( guessing *p_guessing ) {
 }
 
 static guess_difficulty
-fetch_difficulty( guessing *p_guessing ) {
-    const hgl_str *p_texts = p_guessing->texts;
-
+fetch_difficulty( hgl_str *p_texts, int max_input_size ) {
     const bool has_selected = false;
     while( !has_selected) {
         fprintf( stdout, "%s", p_texts[ DIFFICULTY_MENU_TXT ].p_chars );
         fprintf( stdout, "%s", p_texts[ INPUT_MARKER_TXT ].p_chars );
 
-        const hgl_input user_input = hgl_input_fetch( p_guessing->max_input_size );
+        const hgl_input user_input = hgl_input_fetch( max_input_size );
 
         if( user_input.is_valid ){
             const hgl_str_int option_parse = hgl_str_parse_int( user_input.result );
@@ -158,14 +152,13 @@ fetch_difficulty( guessing *p_guessing ) {
 }
 
 static int16_t
-fetch_guess( guessing *p_guessing ) {
-    const hgl_str *p_texts = p_guessing->texts;
+fetch_guess( hgl_str *p_texts, int max_input_size ) {
     hgl_str_int guess = hgl_str_int_invalid();
 
     while( true ){
         fprintf( stdout, "%s\n\n", p_texts[ ENTER_NUM_TXT ].p_chars );
         fprintf( stdout, "%s", p_texts[ INPUT_MARKER_TXT ].p_chars );
-        const hgl_input user_input = hgl_input_fetch( p_guessing->max_input_size );
+        const hgl_input user_input = hgl_input_fetch( max_input_size );
         if( user_input.is_valid ){
             guess = hgl_str_parse_int( user_input.result );
         }
