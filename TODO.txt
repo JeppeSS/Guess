@@ -1,6 +1,5 @@
 TODO - [Doc]: Write docu to the function definitions in hgl_rand.h.
 TODO - [Test]: Write some tests for hgl_rand.
-TODO - [Core]: Add functionality to parse string to int.
 TODO - [Core]: Write docu to the function definitions in hgl_str.h.
 TODO - [Test]: Write some tests for hgl_str
 TODO - [Core]: Move hgl_str_int code to its own file. 
