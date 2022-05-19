@@ -31,7 +31,7 @@ guessing_new( void ) {
 
     return ( guessing ) {
         .is_running      = false,
-        .max_input_size  = 64,
+        .config          = configuration_new(),
         .game_state      = MENU,
         .state           = guess_state_invalid(),
         .texts           = {
@@ -73,20 +73,22 @@ guessing_run( guessing *p_guessing ) {
 
 static void
 handle_menu_scene( guessing *p_guessing ) {
-    p_guessing->game_state = fetch_menu_option( p_guessing->texts, p_guessing->max_input_size );
+    const configuration config = p_guessing->config;
+    p_guessing->game_state = fetch_menu_option( p_guessing->texts, config.max_input_size );
 }
 
 static void
 handle_play_scene( guessing *p_guessing ) {
     const hgl_str *p_texts = p_guessing->texts;
+    const configuration config = p_guessing->config;
     if( p_guessing->state.is_over ){
-      const guess_difficulty difficulty = fetch_difficulty( p_guessing->texts, p_guessing->max_input_size );
+      const guess_difficulty difficulty = fetch_difficulty( p_guessing->texts, config.max_input_size );
       p_guessing->state                 = guess_state_select_difficulty( difficulty );
     
     } else {
         fprintf( stdout, "\n%s %d - %d\n", p_texts[ RANGE_TXT ].p_chars, p_guessing->state.lower_bound, p_guessing->state.upper_bound );
         fprintf( stdout, "%s %d / %d\n\n", p_texts[ ATTEMPTS_TXT ].p_chars, p_guessing->state.attempts_used, p_guessing->state.allowed_attempts );
-        const int16_t guess = fetch_guess( p_guessing->texts, p_guessing->max_input_size );
+        const int16_t guess = fetch_guess( p_guessing->texts, config.max_input_size );
         process_guess( p_guessing, guess );
     }
 }

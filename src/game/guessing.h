@@ -6,6 +6,7 @@
 
 #include "core/string/hgl_str.h"
 #include "logic/guess_state.h"
+#include "logic/configuration.h"
 
 typedef enum {
     ENTER_NUM_TXT       = 0,
@@ -39,13 +40,15 @@ typedef struct {
     game_state  game_state;
     guess_state state;
 
-    // Configurations
-    int max_input_size;
+    configuration config;
     
     // Storage
     hgl_str texts[ TXT_COUNT ];
 
 } guessing;
+
+
+
 
 
 guessing
